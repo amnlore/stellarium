@@ -1,0 +1,6 @@
+size_class,n_trials,n_accepted,acceptance_rate
+XS,50,50,1.0
+S,50,50,1.0
+M,50,50,1.0
+L,50,50,1.0
+XL,50,50,1.0

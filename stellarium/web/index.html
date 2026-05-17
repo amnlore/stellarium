@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Stellarium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ──────────────────  Top bar  ────────────────── -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">✦</span>
+      <span class="brand-name">Stellarium</span>
+    </div>
+
+    <div class="topbar-center">
+      <div class="size-tabs" id="size-tabs">
+        <button class="size-tab" data-size="XS">XS</button>
+        <button class="size-tab" data-size="S">S</button>
+        <button class="size-tab" data-size="M">M</button>
+        <button class="size-tab" data-size="L">L</button>
+        <button class="size-tab" data-size="XL">XL</button>
+      </div>
+      <button class="icon-btn" id="btn-new" title="New random instance (N)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"></polyline>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div class="topbar-right">
+      <div class="mode-tabs" id="mode-tabs">
+        <button class="mode-tab active" data-mode="play">Play</button>
+        <button class="mode-tab" data-mode="solve">Watch solver</button>
+      </div>
+      <button class="icon-btn" id="btn-help" title="How to play (?)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ──────────────────  Main canvas  ────────────────── -->
+  <main class="canvas-wrap">
+    <svg id="board" viewBox="-0.06 -0.06 1.12 1.12" preserveAspectRatio="xMidYMid meet"></svg>
+
+    <!-- Floating instance label (top-left) -->
+    <div class="instance-chip" id="instance-chip">
+      <span id="chip-id">—</span>
+      <span class="chip-sep">·</span>
+      <span id="chip-meta">—</span>
+    </div>
+
+    <!-- Floating zoom controls (top-right) -->
+    <div class="zoom-controls">
+      <button class="icon-btn" id="btn-zoom-in" title="Zoom in">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      </button>
+      <button class="icon-btn" id="btn-zoom-out" title="Zoom out">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+      </button>
+      <button class="icon-btn" id="btn-zoom-reset" title="Reset view (0)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg>
+      </button>
+    </div>
+
+    <!-- Floating progress (bottom-left) -->
+    <div class="progress" id="progress">
+      <div class="prog-row"><span class="prog-dot anchor"></span><span class="prog-label">Anchors</span><span class="prog-val" id="prog-anchor">0/0</span></div>
+      <div class="prog-row"><span class="prog-dot relay"></span><span class="prog-label">Relays</span><span class="prog-val" id="prog-relay">0/0</span></div>
+      <div class="prog-row"><span class="prog-dot dim"></span><span class="prog-label">Dims</span><span class="prog-val" id="prog-dim">0/0</span></div>
+    </div>
+
+    <!-- Solver stats (bottom-left, replaces progress in solve mode) -->
+    <div class="solver-stats" id="solver-stats" hidden>
+      <div class="prog-row"><span class="prog-label">Step</span><span class="prog-val" id="ss-step">0</span></div>
+      <div class="prog-row"><span class="prog-label">Decisions</span><span class="prog-val" id="ss-decisions">0</span></div>
+      <div class="prog-row"><span class="prog-label">Propagations</span><span class="prog-val" id="ss-propagations">0</span></div>
+      <div class="prog-row"><span class="prog-label">Conflicts</span><span class="prog-val" id="ss-conflicts">0</span></div>
+    </div>
+
+    <!-- Floating action bar (bottom-center) -->
+    <div class="action-bar" id="action-bar">
+      <div class="actions" id="play-actions">
+        <button class="action-btn ghost" id="btn-clear">Clear</button>
+        <button class="action-btn primary" id="btn-reveal">Reveal</button>
+      </div>
+      <div class="actions" id="solve-actions" hidden>
+        <button class="action-btn primary" id="btn-start">Start</button>
+        <button class="action-btn ghost" id="btn-pause">Pause</button>
+        <button class="action-btn ghost" id="btn-step">Step</button>
+        <button class="action-btn ghost" id="btn-reset">Reset</button>
+        <div class="speed-control">
+          <span class="speed-label">slow</span>
+          <input type="range" id="speed" min="0" max="100" value="60" />
+          <span class="speed-label">fast</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subtle status (bottom-center, below action bar) -->
+    <div class="status-toast" id="status">Click candidate edges to build a constellation.</div>
+
+    <!-- Solver narration (right side, solve mode) -->
+    <div class="solver-action" id="solver-action" hidden></div>
+
+    <!-- Solved/failure overlay (dismissible) -->
+    <div class="overlay" id="overlay" hidden>
+      <div class="overlay-card">
+        <div class="overlay-icon" id="overlay-icon">✦</div>
+        <div class="overlay-title" id="overlay-title">Solved</div>
+        <div class="overlay-sub" id="overlay-sub"></div>
+        <div class="overlay-actions">
+          <button class="action-btn ghost" id="overlay-close">Dismiss</button>
+          <button class="action-btn primary" id="overlay-next">New puzzle</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Help modal -->
+    <div class="overlay" id="help-modal" hidden>
+      <div class="overlay-card help">
+        <div class="overlay-title">How to play</div>
+        <div class="help-body">
+          <p>Each star has a required <em>degree</em> — the number of selected edges touching it.</p>
+          <ul class="help-list">
+            <li><span class="help-dot anchor"></span><b>Anchor</b> stars need exactly <b>2</b> selected edges.</li>
+            <li><span class="help-dot relay"></span><b>Relay</b> stars need exactly <b>1</b>.</li>
+            <li><span class="help-dot dim"></span><b>Dim</b> stars need <b>0</b>.</li>
+          </ul>
+          <p class="help-note">A star's outline turns <span class="help-pill ok">green</span> when its degree matches and <span class="help-pill bad">pink</span> when it doesn't. Click an edge to toggle it. Drag to pan, scroll to zoom.</p>
+          <p class="help-note">Each puzzle has a unique solution — no guessing required.</p>
+        </div>
+        <div class="overlay-actions">
+          <button class="action-btn primary" id="help-close">Got it</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="instances.js"></script>
+  <script src="solver.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
