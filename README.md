@@ -135,24 +135,3 @@ python -m http.server 8000
 
 `build_instances.py` pre-bakes the suite into `instances.js` so the page loads with no backend. `solver.js` is a hand-written DPLL-style solver that animates unit propagation on the chosen puzzle.
 
-## Building the report
-
-```bash
-# In Overleaf: upload report.tex plus the six PDFs from
-# stellarium/experiments/figures/ into a figures/ folder, then compile.
-
-# Locally (requires a TeX distribution):
-mkdir -p figures && cp stellarium/experiments/figures/*.pdf figures/
-pdflatex report.tex && pdflatex report.tex
-```
-
-## Honest limits
-
-- The 100-instance suite is generated from a single seed (`seed=42`); cross-seed variance is unmeasured.
-- All instances have `n_crossing_pairs == 0` because the Delaunay seed is planar — the crossing constraint exists for generality but is dormant on this suite.
-- 91 of 100 instances solve in zero SAT decisions; the difficulty regression has `R^2 = 0.156`. The suite is easy for all three backends. See the Discussion section of `report.tex`.
-
-## Citation
-
-If you reference this work, please cite the report and link to this repository:
-`https://github.com/amnlore/stellarium`
