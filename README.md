@@ -62,15 +62,6 @@ stellarium/
   visualizer/           Matplotlib renderer for spot-checks
   web/                  Static browser frontend with an animated JS solver
   tests/                pytest suite (24 tests)
-report.tex              The 5-page report (Overleaf-ready)
-```
-
-## Quickstart
-
-Python 3.10+ recommended. Gurobi requires a licence (academic licences are free).
-
-```bash
-pip install pysat z3-solver gurobipy numpy scipy pandas matplotlib pytest
 ```
 
 ### Generate a single instance
